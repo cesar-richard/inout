@@ -1,31 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button, Card, Icon } from "semantic-ui-react";
 import axios from "axios";
 
 function App() {
   const [count, setCount] = useState(0);
   const [total, setTotal] = useState(0);
-  const refreshCount = () => {
-    setTimeout(() => {
-      axios.get("https://inout-api.crichard.fr/").then(({ data }) => {
-        const inside = data.filter(x => x._id === "in")[0].count;
-        const outside = data.filter(x => x._id === "out")[0].count;
-        setCount(inside - outside);
-        setTotal(inside);
-        refreshCount();
-      });
-    }, 5000);
+
+  const displayFreshCount = useCallback(() => {
+    axios.get("https://inout-api.crichard.fr/").then(({ data }) => {
+      handleDatas(data);
+    });
+  }, []);
+
+  const handleDatas = data => {
+    const inside = data.filter(x => x._id === "in")[0].count;
+    const outside = data.filter(x => x._id === "out")[0].count;
+    setCount(inside - outside);
+    setTotal(inside);
   };
+
   const handleIncrement = () => {
     setCount(count + 1);
     axios
       .post("https://inout-api.crichard.fr/", { kind: "in", value: 1 })
-      .then(({ data }) =>
-        setCount(
-          data.filter(x => x._id === "in")[0].count -
-            data.filter(x => x._id === "out")[0].count
-        )
-      );
+      .then(({ data }) => {
+        handleDatas(data);
+      });
   };
 
   const handleDecrement = () => {
@@ -33,24 +33,21 @@ function App() {
     axios
       .post("https://inout-api.crichard.fr/", { kind: "out", value: 1 })
       .then(({ data }) => {
-        setCount(
-          data.filter(x => x._id === "in")[0].count -
-            data.filter(x => x._id === "out")[0].count
-        );
+        handleDatas(data);
       });
   };
   useEffect(() => {
-    async function fetchData() {
-      axios.get("https://inout-api.crichard.fr/").then(({ data }) => {
-        setCount(
-          data.filter(x => x._id === "in")[0].count -
-            data.filter(x => x._id === "out")[0].count
-        );
-        refreshCount();
-      });
-    }
-    fetchData();
-  });
+    const refreshCount = force => {
+      if (force) {
+        displayFreshCount();
+      }
+      setTimeout(() => {
+        displayFreshCount();
+        refreshCount(false);
+      }, 5000);
+    };
+    refreshCount(true);
+  }, [displayFreshCount]);
 
   return (
     <Card style={{ width: "100%", height: "100%" }}>
