@@ -6,7 +6,7 @@ function App() {
   const [count, setCount] = useState(0);
   const refreshCount = () => {
     setTimeout(() => {
-      axios.get("http://localhost:3000/").then(({ data }) => {
+      axios.get("http://37.187.114.131:3000/").then(({ data }) => {
         setCount(
           data.filter(x => x._id === "in")[0].count -
             data.filter(x => x._id === "out")[0].count
@@ -18,7 +18,7 @@ function App() {
   const handleIncrement = () => {
     setCount(count + 1);
     axios
-      .post("http://localhost:3000/", { kind: "in", value: 1 })
+      .post("http://37.187.114.131:3000/", { kind: "in", value: 1 })
       .then(({ data }) =>
         setCount(
           data.filter(x => x._id === "in")[0].count -
