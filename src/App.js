@@ -7,7 +7,7 @@ function App() {
   const [total, setTotal] = useState(0);
   const refreshCount = () => {
     setTimeout(() => {
-      axios.get("http://37.187.114.131/").then(({ data }) => {
+      axios.get("https://inout-api.crichard.fr/").then(({ data }) => {
         const inside = data.filter(x => x._id === "in")[0].count;
         const outside = data.filter(x => x._id === "out")[0].count;
         setCount(inside - outside);
@@ -19,7 +19,7 @@ function App() {
   const handleIncrement = () => {
     setCount(count + 1);
     axios
-      .post("http://37.187.114.131/", { kind: "in", value: 1 })
+      .post("https://inout-api.crichard.fr/", { kind: "in", value: 1 })
       .then(({ data }) =>
         setCount(
           data.filter(x => x._id === "in")[0].count -
@@ -31,7 +31,7 @@ function App() {
   const handleDecrement = () => {
     setCount(count - 1);
     axios
-      .post("http://37.187.114.131/", { kind: "out", value: 1 })
+      .post("https://inout-api.crichard.fr/", { kind: "out", value: 1 })
       .then(({ data }) => {
         setCount(
           data.filter(x => x._id === "in")[0].count -
@@ -41,7 +41,7 @@ function App() {
   };
   useEffect(() => {
     async function fetchData() {
-      axios.get("http://37.187.114.131/").then(({ data }) => {
+      axios.get("https://inout-api.crichard.fr/").then(({ data }) => {
         setCount(
           data.filter(x => x._id === "in")[0].count -
             data.filter(x => x._id === "out")[0].count
