@@ -1,16 +1,23 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Button, Card, Icon } from "semantic-ui-react";
 import axios from "axios";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useHistory
+} from "react-router-dom";
 
-function App() {
+function Counter({ match }) {
   const [count, setCount] = useState(0);
   const [total, setTotal] = useState(0);
 
-  const displayFreshCount = useCallback(() => {
-    axios.get("https://inout-api.crichard.fr/").then(({ data }) => {
+  var displayFreshCount = useCallback(() => {
+    axios.get("https://inout-api.crichard.fr/rooms/" + match.params.idRoom).then(({ data }) => {
       handleDatas(data);
     });
-  }, []);
+  }, [match.params.idRoom]);
 
   const handleDatas = data => {
     const inside = data.filter(x => x._id === "in")[0];
@@ -22,7 +29,7 @@ function App() {
   const handleIncrement = () => {
     setCount(count + 1);
     axios
-      .post("https://inout-api.crichard.fr/", { kind: "in", value: 1 })
+      .post("https://inout-api.crichard.fr/rooms/" + match.params.idRoom, { kind: "in", value: 1 })
       .then(({ data }) => {
         handleDatas(data);
       });
@@ -31,22 +38,27 @@ function App() {
   const handleDecrement = () => {
     setCount(count - 1);
     axios
-      .post("https://inout-api.crichard.fr/", { kind: "out", value: 1 })
+      .post("https://inout-api.crichard.fr/rooms/" + match.params.idRoom, { kind: "out", value: 1 })
       .then(({ data }) => {
         handleDatas(data);
       });
   };
   useEffect(() => {
+    var timeout_id;
     const refreshCount = force => {
       if (force) {
         displayFreshCount();
       }
-      setTimeout(() => {
+      timeout_id = setTimeout(() => {
         displayFreshCount();
         refreshCount(false);
       }, 5000);
     };
     refreshCount(true);
+    return () => {
+      clearTimeout(timeout_id);
+      displayFreshCount();
+    };
   }, [displayFreshCount]);
 
   return (
@@ -77,6 +89,47 @@ function App() {
         </div>
       </Card.Content>
     </Card>
+  );
+}
+
+function Home() {
+  let history = useHistory();
+
+  function handleSubmit(e) {
+    history.push("/rooms/" + document.getElementById("roomSelectorInput").value);
+    e.preventDefault();
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <label>
+        Room id :
+        <input name="idRoom" id="roomSelectorInput" type="text" placeholder="Id" />
+      </label>
+      <input type="submit" value="Aller à la room" />
+    </form>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <div>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Sélectionner une room</Link>
+            </li>
+          </ul>
+        </nav>
+        <Switch>
+          <Route path="/rooms/:idRoom" component={Counter} />
+          <Route path="/">
+            <Home />
+          </Route>
+        </Switch>
+      </div>
+    </Router>
   );
 }
 
