@@ -1,23 +1,27 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Button, Card, Icon } from "semantic-ui-react";
 import axios from "axios";
+import Home from "./Home";
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   Link,
-  useHistory
+  useParams
 } from "react-router-dom";
 
-function Counter({ match }) {
+function Counter() {
+  let { idRoom } = useParams();
   const [count, setCount] = useState(0);
   const [total, setTotal] = useState(0);
 
   var displayFreshCount = useCallback(() => {
-    axios.get("https://inout-api.crichard.fr/rooms/" + match.params.idRoom).then(({ data }) => {
-      handleDatas(data);
-    });
-  }, [match.params.idRoom]);
+    axios
+      .get(`https://inout-api.crichard.fr/rooms/${idRoom}`)
+      .then(({ data }) => {
+        handleDatas(data);
+      });
+  }, [idRoom]);
 
   const handleDatas = data => {
     const inside = data.filter(x => x._id === "in")[0];
@@ -29,7 +33,10 @@ function Counter({ match }) {
   const handleIncrement = () => {
     setCount(count + 1);
     axios
-      .post("https://inout-api.crichard.fr/rooms/" + match.params.idRoom, { kind: "in", value: 1 })
+      .post(`https://inout-api.crichard.fr/rooms/${idRoom}`, {
+        kind: "in",
+        value: 1
+      })
       .then(({ data }) => {
         handleDatas(data);
       });
@@ -38,7 +45,10 @@ function Counter({ match }) {
   const handleDecrement = () => {
     setCount(count - 1);
     axios
-      .post("https://inout-api.crichard.fr/rooms/" + match.params.idRoom, { kind: "out", value: 1 })
+      .post(`https://inout-api.crichard.fr/rooms/${idRoom}`, {
+        kind: "out",
+        value: 1
+      })
       .then(({ data }) => {
         handleDatas(data);
       });
@@ -89,25 +99,6 @@ function Counter({ match }) {
         </div>
       </Card.Content>
     </Card>
-  );
-}
-
-function Home() {
-  let history = useHistory();
-
-  function handleSubmit(e) {
-    history.push("/rooms/" + document.getElementById("roomSelectorInput").value);
-    e.preventDefault();
-  }
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Room id :
-        <input name="idRoom" id="roomSelectorInput" type="text" placeholder="Id" />
-      </label>
-      <input type="submit" value="Aller à la room" />
-    </form>
   );
 }
 
