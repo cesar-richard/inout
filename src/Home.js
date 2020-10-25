@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Input } from "semantic-ui-react";
+import { Button, Input } from "semantic-ui-react";
 import { useHistory } from "react-router-dom";
 
 export default function Home() {
@@ -13,16 +13,16 @@ export default function Home() {
   return (
     <form onSubmit={handleSubmit}>
       <label>
-        Room id : {roomId}
+        Room id :
         <Input
           name="idRoom"
           id="roomSelectorInput"
           type="text"
           placeholder="Id"
-          onChange={v => setRoomId}
+          onChange={(e, { value }) => setRoomId(value)}
         />
       </label>
-      <input type="submit" value="Aller à la room" />
+      <Button primary>Aller à la room</Button>
     </form>
   );
 }
