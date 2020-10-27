@@ -24,10 +24,10 @@ function Counter() {
   }, [idRoom]);
 
   const handleDatas = data => {
-    const inside = data.filter(x => x._id === "in")[0];
-    const outside = data.filter(x => x._id === "out")[0];
-    setCount((inside ? inside.count : 0) - (outside ? outside.count : 0));
-    setTotal(inside ? inside.count : 0);
+    const inside = data.filter(x => x._id === "in")[0] ? data.filter(x => x._id === "in")[0].count : 0;
+    const outside = data.filter(x => x._id === "out")[0] ? data.filter(x => x._id === "out")[0].count : 0;
+    setCount(inside - outside);
+    setTotal(inside);
   };
 
   const handleIncrement = () => {
