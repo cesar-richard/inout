@@ -107,9 +107,7 @@ function App() {
     <Router>
       <div>
         <nav>
-          <Button style={{ margin: "14px" }}>
-            <Link to="/">Menu de sélection de compteur</Link>
-          </Button>
+          <Button style={{ margin: "14px" }} to="/" as={Link}>Menu de sélection de compteur</Button>
         </nav>
         <Switch>
           <Route path="/rooms/:idRoom" component={Counter} />
