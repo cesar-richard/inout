@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Input } from "semantic-ui-react";
+import { Button, Card, Input } from "semantic-ui-react";
 import { useHistory } from "react-router-dom";
 
 export default function Home() {
@@ -11,18 +11,22 @@ export default function Home() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Room id :
-        <Input
-          name="idRoom"
-          id="roomSelectorInput"
-          type="text"
-          placeholder="Id"
-          onChange={(e, { value }) => setRoomId(value)}
-        />
-      </label>
-      <Button primary>Aller à la room</Button>
-    </form>
+    <Card>
+      <Card.Content>
+        <form onSubmit={handleSubmit}>
+          <label>
+            Id du compteur :
+            <Input
+              name="idRoom"
+              id="roomSelectorInput"
+              type="text"
+              placeholder="Compteur"
+              onChange={(e, { value }) => setRoomId(value)}
+            />
+          </label>
+          <Button primary>Aller au compteur</Button>
+        </form>
+      </Card.Content>
+    </Card>
   );
 }
