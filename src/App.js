@@ -24,10 +24,10 @@ function Counter() {
   }, [idRoom]);
 
   const handleDatas = data => {
-    const inside = data.filter(x => x._id === "in")[0];
-    const outside = data.filter(x => x._id === "out")[0];
-    setCount((inside ? inside.count : 0) - (outside ? outside.count : 0));
-    setTotal(inside.count);
+    const inside = data.filter(x => x._id === "in")[0] ? data.filter(x => x._id === "in")[0].count : 0;
+    const outside = data.filter(x => x._id === "out")[0] ? data.filter(x => x._id === "out")[0].count : 0;
+    setCount(inside - outside);
+    setTotal(inside);
   };
 
   const handleIncrement = () => {
@@ -107,11 +107,7 @@ function App() {
     <Router>
       <div>
         <nav>
-          <ul>
-            <li>
-              <Link to="/">Sélectionner une room</Link>
-            </li>
-          </ul>
+          <Button style={{ margin: "14px" }} to="/" as={Link}>Menu de sélection de compteur</Button>
         </nav>
         <Switch>
           <Route path="/rooms/:idRoom" component={Counter} />
